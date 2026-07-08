@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>RavenLab | مصمم الكليكر ثلاثي الأبعاد</title>
+  <meta name="description" content="خصص كليكر RavenLab مباشرة من الجوال أو سطح المكتب باستخدام عرض ثلاثي الأبعاد." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css?v=invoice-examples-20260709" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="page-bg" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="RavenLab">
+      <span class="brand-mark">R</span>
+      <span>
+        <strong>RavenLab</strong>
+        <small>Custom Clickers</small>
+      </span>
+    </a>
+    <nav class="header-actions" aria-label="روابط سريعة">
+      <a href="#steps">الخطوات</a>
+      <a href="#configurator">المصمم</a>
+      <button id="themeToggle" class="ghost-btn" type="button" aria-label="تبديل الوضع">☾</button>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">RavenLab 3D Configurator</span>
+        <h1>صمم كليكر RavenLab بخطوات بسيطة.</h1>
+        <p>اختر نموذج جاهز أو صمم بنفسك: حدد عدد الأزرار، اللون، شكل الكابات، ثم أرسل الفاتورة عبر واتساب أو إنستغرام.</p>
+        <div class="hero-actions">
+          <a class="primary-btn" href="#configurator">ابدأ التصميم</a>
+          <a class="secondary-btn" href="#steps">طريقة الاستخدام</a>
+        </div>
+      </div>
+      <div class="hero-card" aria-hidden="true">
+        <div class="mini-phone">
+          <span></span>
+          <b></b>
+          <i></i>
+        </div>
+        <h2>مصمم مناسب للجوال</h2>
+        <p>معاينة في الأعلى وأدوات التعديل أسفلها.</p>
+      </div>
+    </section>
+
+    <section class="steps-intro" id="steps" aria-labelledby="stepsTitle">
+      <div class="steps-copy glass">
+        <span class="eyebrow">طريقة التصميم</span>
+        <h2 id="stepsTitle">خطوات سهلة وواضحة</h2>
+        <p>استخدم الموقع من الأعلى للأسفل: عدد الأزرار، لون الأساس، ثم اضغط على الكاب الذي تريد تغييره.</p>
+      </div>
+      <div class="steps-list">
+        <article class="step-card glass"><b>1</b><h3>عدد الأزرار</h3><p>اختر من 1 إلى 9 أزرار.</p></article>
+        <article class="step-card glass"><b>2</b><h3>لون الكليكر</h3><p>غيّر لون جسم الكليكر مباشرة.</p></article>
+        <article class="step-card glass"><b>3</b><h3>حدد الكاب</h3><p>اضغط على الكاب داخل المشهد لتعديله.</p></article>
+        <article class="step-card glass"><b>4</b><h3>الشكل أو الحرف</h3><p>اختر سادة، حرف إنجليزي، أو شكل مميز.</p></article>
+        <article class="step-card glass"><b>5</b><h3>جرّب وأرسل</h3><p>جرّب الضغط ثم أرسل التفاصيل.</p></article>
+      </div>
+    </section>
+
+    <section class="configurator" id="configurator">
+      <div class="mobile-simple-guide glass" aria-label="شرح خطوات التصميم على الجوال">
+        <strong>طريقة الاستخدام المختصرة</strong>
+        <div class="simple-step-row">
+          <span><b>1</b> اختر نموذج جاهز أو عدد الأزرار</span>
+          <span><b>2</b> اضغط على الكاب من الصورة</span>
+          <span><b>3</b> غيّر اللون أو الحرف أو الشكل</span>
+          <span><b>4</b> جرّب الضغط ثم أرسل الفاتورة</span>
+        </div>
+      </div>
+      <div class="scene-panel glass">
+        <div class="scene-toolbar">
+          <div>
+            <span class="eyebrow">المعاينة الحية</span>
+            <h2>المعاينة</h2>
+          </div>
+          <div class="scene-tools">
+            <button id="resetCamera" type="button" class="small-btn">رتّب المشهد</button>
+            <button id="clearSelection" type="button" class="small-btn">إلغاء</button>
+            <button id="testMode" type="button" class="small-btn test-btn">تجربة الضغط</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="viewer" aria-label="مشهد ثلاثي الأبعاد للكليكر"></canvas>
+          <div class="loader" id="loader">
+            <span class="spinner"></span>
+            <b>تحميل المجسم...</b>
+          </div>
+          <div class="scene-watermark">RavenLab</div>
+          <div class="scene-hint" id="sceneHint">
+            اسحب للدوران · اضغط على كاب لتغييره
+          </div>
+        </div>
+
+        <div class="selected-strip">
+          <strong>الكابات المحددة:</strong>
+          <span id="selectedText">لا يوجد تحديد</span>
+        </div>
+      </div>
+
+      <aside class="controls-panel glass">
+        <div class="panel-head">
+          <span class="eyebrow">إعدادات المنتج</span>
+          <h2>خصص الطلب</h2>
+        </div>
+
+        <div class="mobile-help">
+          اختر نموذج جاهز للتجربة السريعة، أو صمم من الصفر. للتعديل اضغط على الكاب داخل المعاينة ثم اختر اللون أو الشكل.
+        </div>
+
+        <section class="control-section preset-section">
+          <div class="section-title">
+            <h3>نماذج جاهزة</h3>
+            <span>اختياري</span>
+          </div>
+          <div class="preset-grid" id="presetButtons"></div>
+        </section>
+
+        <section class="control-section">
+          <div class="section-title">
+            <h3>1. عدد الأزرار</h3>
+            <span id="countBadge">1 زر</span>
+          </div>
+          <div class="button-grid compact" id="countButtons"></div>
+        </section>
+
+        <section class="control-section" id="layoutSection">
+          <div class="section-title">
+            <h3>شكل القاعدة</h3>
+            <span>حسب المجسمات المتوفرة</span>
+          </div>
+          <div class="segmented" id="layoutButtons"></div>
+        </section>
+
+        <section class="control-section">
+          <div class="section-title">
+            <h3>2. لون الكليكر</h3>
+            <span id="baseColorLabel">أسود</span>
+          </div>
+          <div class="swatches" id="baseColors"></div>
+        </section>
+
+        <section class="control-section cap-tools">
+          <div class="section-title">
+            <h3>3. الكابات</h3>
+            <span>حدد من المشهد</span>
+          </div>
+          <div class="quick-actions">
+            <button id="selectAllCaps" type="button" class="small-btn">اختيار كل الكابات</button>
+            <button id="selectNoneCaps" type="button" class="small-btn">إلغاء الاختيار</button>
+          </div>
+
+          <label class="field-label" for="capType">شكل الكاب</label>
+          <select id="capType" class="input"></select>
+
+          <div id="letterBox" class="letter-box">
+            <label class="field-label" for="letterInput">الحرف الإنجليزي</label>
+            <input id="letterInput" class="input" type="text" maxlength="1" value="A" inputmode="latin" autocomplete="off" autocapitalize="characters" />
+            <div class="letter-grid" id="letterGrid"></div>
+          </div>
+
+          <div id="capColorBox">
+            <div class="section-title slim">
+              <h3>لون الكاب</h3>
+              <span id="capColorLabel">أبيض</span>
+            </div>
+            <div class="swatches" id="capColors"></div>
+          </div>
+        </section>
+
+        <section class="summary-card">
+          <div>
+            <span class="eyebrow">السعر التقريبي</span>
+            <strong id="priceText">0 IQD</strong>
+          </div>
+          <div class="summary-actions">
+            <button id="testModePanel" class="secondary-btn wide" type="button">تجربة الكليكر</button>
+            <button id="completeOrder" class="primary-btn wide" type="button">إكمال الطلب</button>
+          </div>
+        </section>
+
+        <details class="json-box summary-details">
+          <summary>عرض تفاصيل الطلب</summary>
+          <pre id="jsonPreview"></pre>
+        </details>
+      </aside>
+    </section>
+  </main>
+
+  <div class="mobile-order-bar" aria-label="إكمال الطلب من الجوال">
+    <div>
+      <small>السعر التقريبي</small>
+      <strong id="mobilePriceText">0 IQD</strong>
+    </div>
+    <button id="completeOrderMobile" class="primary-btn" type="button">إكمال الطلب</button>
+  </div>
+
+  <div class="order-modal" id="orderModal" aria-hidden="true">
+    <div class="order-backdrop" data-close-order></div>
+    <section class="order-dialog" role="dialog" aria-modal="true" aria-labelledby="orderTitle">
+      <button class="modal-close" type="button" data-close-order aria-label="إغلاق">×</button>
+      <span class="eyebrow">تفاصيل الطلب</span>
+      <h2 id="orderTitle">أرسل الفاتورة لنا</h2>
+      <p>اكتب رقمك وعنوانك، ثم أرسل الفاتورة عبر واتساب أو إنستغرام. <strong>السعر النهائي يتم تأكيده من RavenLab بعد مراجعة الطلب.</strong></p>
+      <div class="customer-fields" aria-label="معلومات العميل">
+        <label>اسم العميل <input id="customerName" class="input" type="text" placeholder="مثال: علي" autocomplete="name" /></label>
+        <label>رقم الجوال <input id="customerPhone" class="input" type="tel" placeholder="07xxxxxxxxx" autocomplete="tel" inputmode="tel" /></label>
+        <label class="full">العنوان <input id="customerAddress" class="input" type="text" placeholder="المحافظة / المنطقة / أقرب نقطة" autocomplete="street-address" /></label>
+        <label class="full">ملاحظات <input id="customerNotes" class="input" type="text" placeholder="أي ملاحظة إضافية" /></label>
+      </div>
+      <textarea id="orderDetails" class="order-details" readonly></textarea>
+      <div class="order-actions">
+        <button id="sendWhatsapp" class="primary-btn" type="button">إرسال عبر واتساب</button>
+        <button id="openInstagram" class="secondary-btn" type="button">نسخ وإرسال إنستغرام</button>
+        <button id="copyOrder" class="secondary-btn" type="button">نسخ الفاتورة</button>
+        <button id="shareOrder" class="small-btn" type="button">مشاركة</button>
+        <button class="small-btn" type="button" data-close-order>إغلاق</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="assets/js/app.js?v=invoice-examples-20260709"></script>
+</body>
+</html>
