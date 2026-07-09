@@ -107,3 +107,10 @@ The site expects holder files like:
 - `SwitchHolder_9_Sequare.glb`
 
 Keycap files use `Keycup_*` for letters and `keycap_*` for special shapes.
+
+
+## آخر تحديث أسعار
+
+تم تحديث الأسعار حسب القائمة الجديدة:
+- السويتج: 1=1000، 2=1500، 3=2500، 4=3000، 5=3500، 6=4000، 7=4500، 8=5000، 9=5500 د.ع.
+- الكابات: عادي=500، حرف=500، جبن=500، وافل=500، نودلز=1000، فراولة=1000، شوكولاتة=500 د.ع.
