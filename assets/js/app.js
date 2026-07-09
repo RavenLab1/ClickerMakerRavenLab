@@ -32,14 +32,23 @@ const CONFIG = {
     }
   },
   bases: {
-    1: { standard: { label: 'عادي', path: `${MODEL_DIR}base_01.glb` } },
-    2: { standard: { label: 'عادي', path: `${MODEL_DIR}base_02.glb` } },
+    1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb`, fallbackPath: `${MODEL_DIR}base_01.glb` } },
+    2: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_2.glb`, fallbackPath: `${MODEL_DIR}base_02.glb` } },
     3: { standard: { label: 'عادي', path: `${MODEL_DIR}base_03.glb` } },
-    4: { standard: { label: 'عادي', path: `${MODEL_DIR}base_04.glb` }, square: { label: 'مربع', path: `${MODEL_DIR}base_04_Square.glb` } },
+    4: {
+      standard: { label: 'عادي', path: `${MODEL_DIR}base_04.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_4_Swquare.glb`, fallbackPath: `${MODEL_DIR}base_04_Square.glb` }
+    },
     5: { standard: { label: 'عادي', path: `${MODEL_DIR}base_05.glb` } },
-    6: { standard: { label: 'عادي', path: `${MODEL_DIR}base_06.glb` }, square: { label: 'مربع', path: `${MODEL_DIR}base_06_Square.glb` } },
+    6: {
+      standard: { label: 'عادي', path: `${MODEL_DIR}base_06.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_6_Sequare.glb`, fallbackPath: `${MODEL_DIR}base_06_Square.glb` }
+    },
     7: { standard: { label: 'عادي', path: `${MODEL_DIR}base_07.glb` } },
-    8: { standard: { label: 'عادي', path: `${MODEL_DIR}base_08.glb` }, square: { label: 'مربع', path: `${MODEL_DIR}base_08_Square.glb` } },
+    8: {
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb`, fallbackPath: `${MODEL_DIR}base_08.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb`, fallbackPath: `${MODEL_DIR}base_08_Square.glb` }
+    },
     9: { standard: { label: 'عادي', path: `${MODEL_DIR}base_09.glb` }, square: { label: 'مربع', path: `${MODEL_DIR}base_09_Square.glb` } },
     10: { standard: { label: 'عادي', path: `${MODEL_DIR}base_10.glb`, hidden: true } },
   },
