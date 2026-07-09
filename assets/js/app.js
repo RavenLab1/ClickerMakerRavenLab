@@ -32,25 +32,28 @@ const CONFIG = {
     }
   },
   bases: {
-    1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb`, fallbackPath: `${MODEL_DIR}base_01.glb` } },
-    2: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_2.glb`, fallbackPath: `${MODEL_DIR}base_02.glb` } },
-    3: { standard: { label: 'عادي', path: `${MODEL_DIR}base_03.glb` } },
+    1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb` } },
+    2: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_2.glb` } },
+    3: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_3.glb` } },
     4: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}base_04.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_4_Swquare.glb`, fallbackPath: `${MODEL_DIR}base_04_Square.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_4.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_4_Swquare.glb` }
     },
-    5: { standard: { label: 'عادي', path: `${MODEL_DIR}base_05.glb` } },
+    5: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_5.glb` } },
     6: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}base_06.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_6_Sequare.glb`, fallbackPath: `${MODEL_DIR}base_06_Square.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_6.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_6_Sequare.glb` }
     },
-    7: { standard: { label: 'عادي', path: `${MODEL_DIR}base_07.glb` } },
+    7: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_7.glb` } },
     8: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb`, fallbackPath: `${MODEL_DIR}base_08.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb`, fallbackPath: `${MODEL_DIR}base_08_Square.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb` }
     },
-    9: { standard: { label: 'عادي', path: `${MODEL_DIR}base_09.glb` }, square: { label: 'مربع', path: `${MODEL_DIR}base_09_Square.glb` } },
-    10: { standard: { label: 'عادي', path: `${MODEL_DIR}base_10.glb`, hidden: true } },
+    9: {
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_9.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_9_Sequare.glb` }
+    },
+    10: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_10.glb`, hidden: true } },
   },
   colors: [
     { id: 'red', name: 'أحمر', hex: '#d83333' },
@@ -544,7 +547,7 @@ async function buildProduct() {
     fitCameraToObject(false);
   } catch (error) {
     console.error(error);
-    showToast('تعذر تحميل أحد مجسمات GLB. تأكد من أسماء الملفات داخل assets/models.');
+    showToast('تعذر تحميل أحد مجسمات GLB. تأكد من أسماء ملفات SwitchHolder و Keycup داخل assets/models.');
   } finally {
     if (token === state.currentToken) {
       setLoading(false);
