@@ -16,19 +16,32 @@ const CONFIG = {
     // عدل هذا الرابط إلى حساب RavenLab الرسمي.
     instagramUrl: 'https://www.instagram.com/ravenlab/',
   },
-  basePrice: 5000,
+  basePrice: 0,
   prices: {
-    switchSeat: 2500,
+    // أسعار جسم الكليكر / السويتج حسب عدد الأزرار
+    switchHolderByCount: {
+      1: 1000,
+      2: 1500,
+      3: 2500,
+      4: 3000,
+      5: 3500,
+      6: 4000,
+      7: 4500,
+      8: 5000,
+      9: 5500,
+    },
+    // سعر احتياطي فقط إذا لم يوجد العدد في switchHolderByCount
+    switchSeat: 0,
     plainKeycap: 500,
-    letterKeycap: 1000,
+    letterKeycap: 500,
     special: {
-      oreo: 3500,
-      strawberry: 3500,
-      waffle: 3500,
-      chocolate: 3000,
-      cheese: 3500,
-      noodles: 3500,
-      chess: 3500,
+      oreo: 500,
+      strawberry: 1000,
+      waffle: 500,
+      chocolate: 500,
+      cheese: 500,
+      noodles: 1000,
+      chess: 500,
     }
   },
   bases: {
@@ -78,13 +91,13 @@ const CONFIG = {
       priceKey: 'letterKeycap',
       tintable: true
     },
-    { id: 'oreo', label: 'أوريو', category: 'special', path: `${MODEL_DIR}keycap_oreo.glb`, price: 3500, tintable: false },
-    { id: 'strawberry', label: 'فراولة', category: 'special', path: `${MODEL_DIR}keycap_Strawberry.glb`, price: 3500, tintable: false },
-    { id: 'waffle', label: 'وافل', category: 'special', path: `${MODEL_DIR}keycap_Waffle.glb`, price: 3500, tintable: false },
-    { id: 'chocolate', label: 'شوكولاتة', category: 'special', path: `${MODEL_DIR}keycap_Chocolate.glb`, fallbackPath: `${MODEL_DIR}keycap_CHOCOLATE.glb`, price: 3000, tintable: false },
-    { id: 'cheese', label: 'جبن', category: 'special', path: `${MODEL_DIR}keycap_Chees.glb`, price: 3500, tintable: false },
-    { id: 'noodles', label: 'نودلز', category: 'special', path: `${MODEL_DIR}keycap_Noodles.glb`, price: 3500, tintable: false },
-    { id: 'chess', label: 'شطرنج', category: 'special', path: `${MODEL_DIR}keycap_Chess.glb`, price: 3500, tintable: false },
+    { id: 'oreo', label: 'أوريو', category: 'special', path: `${MODEL_DIR}keycap_oreo.glb`, price: 500, tintable: false },
+    { id: 'strawberry', label: 'فراولة', category: 'special', path: `${MODEL_DIR}keycap_Strawberry.glb`, price: 1000, tintable: false },
+    { id: 'waffle', label: 'وافل', category: 'special', path: `${MODEL_DIR}keycap_Waffle.glb`, price: 500, tintable: false },
+    { id: 'chocolate', label: 'شوكولاتة', category: 'special', path: `${MODEL_DIR}keycap_Chocolate.glb`, fallbackPath: `${MODEL_DIR}keycap_CHOCOLATE.glb`, price: 500, tintable: false },
+    { id: 'cheese', label: 'جبن', category: 'special', path: `${MODEL_DIR}keycap_Chees.glb`, price: 500, tintable: false },
+    { id: 'noodles', label: 'نودلز', category: 'special', path: `${MODEL_DIR}keycap_Noodles.glb`, price: 1000, tintable: false },
+    { id: 'chess', label: 'شطرنج', category: 'special', path: `${MODEL_DIR}keycap_Chess.glb`, price: 500, tintable: false },
   ],
   presets: [
     {
@@ -1061,12 +1074,22 @@ function makeDefaultCap() {
   return { type: 'plain', color: '#ffffff', colorName: 'أبيض', letter: 'A' };
 }
 
+function getSwitchHolderPrice(count = state.count) {
+  const countPrice = CONFIG.prices.switchHolderByCount?.[Number(count)];
+  if (typeof countPrice === 'number') return countPrice;
+  return CONFIG.basePrice + (Number(count) * (CONFIG.prices.switchSeat || 0));
+}
+
+function getCapPrice(cap) {
+  const def = getCapDef(cap.type);
+  if (def.price !== undefined) return def.price;
+  return CONFIG.prices[def.priceKey] || 0;
+}
+
 function calculatePrice() {
-  let total = CONFIG.basePrice + (state.count * CONFIG.prices.switchSeat);
+  let total = getSwitchHolderPrice(state.count);
   state.caps.forEach((cap) => {
-    const def = getCapDef(cap.type);
-    if (def.price !== undefined) total += def.price;
-    else total += CONFIG.prices[def.priceKey] || 0;
+    total += getCapPrice(cap);
   });
   return total;
 }
@@ -1077,6 +1100,7 @@ function buildOrderJson() {
     product: 'Custom Switch Clicker',
     switches: state.count,
     layout: getLayoutLabel(),
+    switchHolderPrice: getSwitchHolderPrice(state.count),
     baseColor: state.baseColor.name,
     keycaps: state.caps.map((cap, index) => {
       const def = getCapDef(cap.type);
@@ -1087,7 +1111,7 @@ function buildOrderJson() {
         color: def.tintable ? (cap.colorName || cap.color || 'أبيض') : 'original',
         letter: def.category === 'letter' ? (cap.letter || 'A') : null,
         modelFile: def.category === 'letter' ? getLetterModelFileName(cap.letter || 'A') : resolveCapPath(def, cap).split('/').pop(),
-        price: def.price !== undefined ? def.price : (CONFIG.prices[def.priceKey] || 0),
+        price: getCapPrice(cap),
       };
     }),
     price: calculatePrice(),
