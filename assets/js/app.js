@@ -92,10 +92,10 @@ const CONFIG = {
       tintable: true
     },
     { id: 'oreo', label: 'أوريو', category: 'special', path: `${MODEL_DIR}keycap_oreo.glb`, price: 500, tintable: false },
-    { id: 'strawberry', label: 'فراولة', category: 'special', path: `${MODEL_DIR}keycap_Strawberry.glb`, price: 1000, tintable: false },
-    { id: 'waffle', label: 'وافل', category: 'special', path: `${MODEL_DIR}keycap_Waffle.glb`, price: 500, tintable: false },
+    { id: 'strawberry', label: 'فراولة', category: 'special', path: `${MODEL_DIR}keycap_strawberry.glb`, fallbackPath: `${MODEL_DIR}keycap_Strawberry.glb`, price: 1000, tintable: false },
+    { id: 'waffle', label: 'وافل', category: 'special', path: `${MODEL_DIR}keycap_Waffel.glb`, fallbackPath: `${MODEL_DIR}keycap_Waffle.glb`, price: 500, tintable: false },
     { id: 'chocolate', label: 'شوكولاتة', category: 'special', path: `${MODEL_DIR}keycap_Chocolate.glb`, fallbackPath: `${MODEL_DIR}keycap_CHOCOLATE.glb`, price: 500, tintable: false },
-    { id: 'cheese', label: 'جبن', category: 'special', path: `${MODEL_DIR}keycap_Chees.glb`, price: 500, tintable: false },
+    { id: 'cheese', label: 'جبن', category: 'special', path: `${MODEL_DIR}Cheese.glb`, fallbackPath: `${MODEL_DIR}keycap_Cheese.glb`, price: 500, tintable: false },
     { id: 'noodles', label: 'نودلز', category: 'special', path: `${MODEL_DIR}keycap_Noodles.glb`, price: 1000, tintable: false },
     { id: 'chess', label: 'شطرنج', category: 'special', path: `${MODEL_DIR}keycap_Chess.glb`, price: 500, tintable: false },
   ],
@@ -560,7 +560,7 @@ async function buildProduct() {
     fitCameraToObject(false);
   } catch (error) {
     console.error(error);
-    showToast('تعذر تحميل أحد مجسمات GLB. تأكد من أسماء ملفات SwitchHolder و Keycup داخل assets/models.');
+    showToast('تعذر تحميل أحد مجسمات GLB. تأكد من أسماء ملفات SwitchHolder و Keycup وملفات الكابات داخل assets/models.');
   } finally {
     if (token === state.currentToken) {
       setLoading(false);
