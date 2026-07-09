@@ -86,3 +86,24 @@ Settings -> Pages -> Deploy from branch -> main -> / root
 - الأشكال الجديدة المضافة: شطرنج، شوكولاتة، نودلز.
 
 لتعديل الروابط افتح assets/js/app.js وعدل contact.whatsappNumber و contact.instagramUrl.
+
+
+## Naming update
+Base/clicker holder files now use `SwitchHolder_*` instead of `base_*`.
+The site expects holder files like:
+
+- `SwitchHolder_1.glb`
+- `SwitchHolder_2.glb`
+- `SwitchHolder_3.glb`
+- `SwitchHolder_4.glb`
+- `SwitchHolder_4_Swquare.glb`
+- `SwitchHolder_5.glb`
+- `SwitchHolder_6.glb`
+- `SwitchHolder_6_Sequare.glb`
+- `SwitchHolder_7.glb`
+- `SwitchHolder_8.glb`
+- `SwitchHolder_8_Sequare.glb`
+- `SwitchHolder_9.glb`
+- `SwitchHolder_9_Sequare.glb`
+
+Keycap files use `Keycup_*` for letters and `keycap_*` for special shapes.
