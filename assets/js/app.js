@@ -14,7 +14,7 @@ const CONFIG = {
     // إذا تركته فارغًا، زر واتساب يفتح مشاركة عامة للرسالة.
     whatsappNumber: '',
     // عدل هذا الرابط إلى حساب RavenLab الرسمي.
-    instagramUrl: 'https://www.instagram.com/ravenlab/',
+    instagramUrl: 'https://www.instagram.com/raven_lab1/',
   },
   basePrice: 0,
   prices: {
@@ -62,10 +62,7 @@ const CONFIG = {
       standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb` },
       square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb` }
     },
-    9: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_9.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_9_Sequare.glb` }
-    },
+    9: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_9.glb` } },
     10: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_10.glb`, hidden: true } },
   },
   colors: [
@@ -1281,4 +1278,4 @@ function showToast(message) {
   showToast.timer = setTimeout(() => els.toast.classList.remove('show'), 2600);
 }
 
-console.info('RavenLab configurator invoice examples build');
+console.info('RavenLab configurator odd-square-instagram fix');
