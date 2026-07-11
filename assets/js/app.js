@@ -20,15 +20,15 @@ const CONFIG = {
   prices: {
     // أسعار جسم الكليكر / السويتج حسب عدد الأزرار
     switchHolderByCount: {
-      1: 1000,
-      2: 1500,
-      3: 2500,
-      4: 3000,
-      5: 3500,
-      6: 4000,
-      7: 4500,
-      8: 5000,
-      9: 5500,
+      1: 500,
+      2: 750,
+      3: 1000,
+      4: 1250,
+      5: 1500,
+      6: 1750,
+      7: 2000,
+      8: 2500,
+      9: 2750,
     },
     // سعر احتياطي فقط إذا لم يوجد العدد في switchHolderByCount
     switchSeat: 0,
@@ -36,11 +36,11 @@ const CONFIG = {
     letterKeycap: 500,
     special: {
       oreo: 500,
-      strawberry: 1000,
+      strawberry: 750,
       waffle: 500,
       chocolate: 500,
       cheese: 500,
-      noodles: 1000,
+      noodles: 750,
       chess: 500,
     }
   },
