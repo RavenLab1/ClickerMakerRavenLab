@@ -797,82 +797,34 @@ pre { direction: ltr; text-align: left; white-space: pre-wrap; color: var(--mute
 }
 
 
-/* RavenLab cost-based pricing update */
-.toggle-row {
+/* Safe cost-pricing additions */
+.pricing-options .toggle-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 14px;
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--text) 4%, transparent);
+  padding: 12px;
+  border: 1px solid rgba(156, 192, 61, .22);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+  margin-bottom: 12px;
   cursor: pointer;
 }
-.toggle-row input {
+.pricing-options .toggle-row input {
   width: 22px;
   height: 22px;
-  accent-color: var(--brand);
-  flex: 0 0 auto;
+  accent-color: #9cc03d;
 }
-.toggle-row strong,
-.toggle-row small {
-  display: block;
-}
-.toggle-row small {
-  color: var(--muted);
-  margin-top: 3px;
-  font-weight: 800;
-}
-.delivery-options {
-  grid-template-columns: 1fr;
-}
-.price-summary-card {
-  align-items: stretch;
-}
-.price-breakdown {
-  display: grid;
-  gap: 10px;
-  min-width: 210px;
-  flex: 1 1 auto;
-}
+.pricing-options .toggle-row span { display: grid; gap: 2px; }
+.pricing-options .toggle-row small { opacity: .7; font-size: .82rem; }
+.delivery-options { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.price-breakdown { display: grid; gap: 8px; width: 100%; }
 .price-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding-bottom: 9px;
-  border-bottom: 1px solid color-mix(in srgb, var(--bg) 18%, transparent);
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
-.price-line span {
-  font-weight: 900;
-  color: color-mix(in srgb, var(--bg) 72%, transparent);
-}
-.price-line strong {
-  font-size: 20px;
-  margin: 0;
-  white-space: nowrap;
-}
-.price-line.total {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-.price-line.total span {
-  color: var(--brand);
-}
-.price-line.total strong {
-  font-size: 28px;
-}
-
-@media (max-width: 720px) {
-  .toggle-row {
-    min-height: 62px;
-    border-radius: 18px;
-  }
-  .delivery-options {
-    grid-template-columns: 1fr;
-  }
-  .delivery-options .option-btn {
-    font-size: 15px;
-  }
-}
+.price-line.total { border-bottom: 0; padding-top: 10px; }
+.price-line.total strong { color: #9cc03d; font-size: 1.25rem; }
