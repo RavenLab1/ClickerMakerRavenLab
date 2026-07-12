@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css?v=odd-square-instagram-20260711" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=cost-fixed-20260712" />
   <script type="importmap">
   {
     "imports": {
@@ -184,10 +184,36 @@
           </div>
         </section>
 
-        <section class="summary-card">
-          <div>
-            <span class="eyebrow">السعر التقريبي</span>
-            <strong id="priceText">0 IQD</strong>
+        <section class="control-section pricing-options">
+          <div class="section-title">
+            <h3>4. التوصيل والإضافات</h3>
+            <span id="deliveryBadge">بقية المحافظات</span>
+          </div>
+          <label class="toggle-row" for="keychainToggle">
+            <input id="keychainToggle" type="checkbox" />
+            <span>
+              <strong>إضافة ميدالية</strong>
+              <small>تضاف إلى تكلفة المنتج قبل حساب الربح</small>
+            </span>
+          </label>
+          <label class="field-label">منطقة التوصيل</label>
+          <div class="segmented delivery-options" id="deliveryButtons"></div>
+        </section>
+
+        <section class="summary-card price-summary-card">
+          <div class="price-breakdown">
+            <div class="price-line">
+              <span>سعر المنتج</span>
+              <strong id="productPriceText">0 IQD</strong>
+            </div>
+            <div class="price-line">
+              <span>التوصيل</span>
+              <strong id="deliveryPriceText">0 IQD</strong>
+            </div>
+            <div class="price-line total">
+              <span>المجموع التقريبي</span>
+              <strong id="priceText">0 IQD</strong>
+            </div>
           </div>
           <div class="summary-actions">
             <button id="testModePanel" class="secondary-btn wide" type="button">تجربة الكليكر</button>
@@ -205,7 +231,7 @@
 
   <div class="mobile-order-bar" aria-label="إكمال الطلب من الجوال">
     <div>
-      <small>السعر التقريبي</small>
+      <small>المجموع التقريبي</small>
       <strong id="mobilePriceText">0 IQD</strong>
     </div>
     <button id="completeOrderMobile" class="primary-btn" type="button">إكمال الطلب</button>
@@ -237,6 +263,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="assets/js/app.js?v=odd-square-instagram-20260711"></script>
+  <script type="module" src="assets/js/app.js?v=cost-fixed-20260712"></script>
 </body>
 </html>
