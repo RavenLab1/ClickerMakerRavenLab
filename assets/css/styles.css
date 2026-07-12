@@ -795,3 +795,84 @@ pre { direction: ltr; text-align: left; white-space: pre-wrap; color: var(--mute
     font-size: 15px;
   }
 }
+
+
+/* RavenLab cost-based pricing update */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+  cursor: pointer;
+}
+.toggle-row input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--brand);
+  flex: 0 0 auto;
+}
+.toggle-row strong,
+.toggle-row small {
+  display: block;
+}
+.toggle-row small {
+  color: var(--muted);
+  margin-top: 3px;
+  font-weight: 800;
+}
+.delivery-options {
+  grid-template-columns: 1fr;
+}
+.price-summary-card {
+  align-items: stretch;
+}
+.price-breakdown {
+  display: grid;
+  gap: 10px;
+  min-width: 210px;
+  flex: 1 1 auto;
+}
+.price-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid color-mix(in srgb, var(--bg) 18%, transparent);
+}
+.price-line span {
+  font-weight: 900;
+  color: color-mix(in srgb, var(--bg) 72%, transparent);
+}
+.price-line strong {
+  font-size: 20px;
+  margin: 0;
+  white-space: nowrap;
+}
+.price-line.total {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.price-line.total span {
+  color: var(--brand);
+}
+.price-line.total strong {
+  font-size: 28px;
+}
+
+@media (max-width: 720px) {
+  .toggle-row {
+    min-height: 62px;
+    border-radius: 18px;
+  }
+  .delivery-options {
+    grid-template-columns: 1fr;
+  }
+  .delivery-options .option-btn {
+    font-size: 15px;
+  }
+}
