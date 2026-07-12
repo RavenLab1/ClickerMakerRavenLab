@@ -13,7 +13,7 @@ const CONFIG = {
     // ضع رقم واتساب المتجر بصيغة دولية بدون +، مثال العراق: 9647XXXXXXXXX.
     // إذا تركته فارغًا، زر واتساب يفتح مشاركة عامة للرسالة.
     whatsappNumber: '',
-    // عدل هذا الرابط إلى حساب RavenLab الرسمي.
+    // رابط إنستغرام RavenLab الرسمي.
     instagramUrl: 'https://www.instagram.com/raven_lab1/',
   },
   costing: {
@@ -51,26 +51,54 @@ const CONFIG = {
     },
     largeKeycaps: ['noodles', 'strawberry'],
   },
+  basePrice: 0,
+  prices: {
+    // أسعار جسم الكليكر / السويتج حسب عدد الأزرار
+    switchHolderByCount: {
+      1: 500,
+      2: 750,
+      3: 1000,
+      4: 1250,
+      5: 1500,
+      6: 1750,
+      7: 2000,
+      8: 2500,
+      9: 2750,
+    },
+    // سعر احتياطي فقط إذا لم يوجد العدد في switchHolderByCount
+    switchSeat: 0,
+    plainKeycap: 500,
+    letterKeycap: 500,
+    special: {
+      oreo: 500,
+      strawberry: 750,
+      waffle: 500,
+      chocolate: 500,
+      cheese: 500,
+      noodles: 750,
+      chess: 500,
+    }
+  },
   bases: {
-    1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb`, fallbackPath: `${MODEL_DIR}base_01.glb` } },
-    2: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_2.glb`, fallbackPath: `${MODEL_DIR}base_02.glb` } },
-    3: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_3.glb`, fallbackPath: `${MODEL_DIR}base_03.glb` } },
+    1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb` } },
+    2: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_2.glb` } },
+    3: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_3.glb` } },
     4: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_4.glb`, fallbackPath: `${MODEL_DIR}base_04.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_4_Swquare.glb`, fallbackPath: `${MODEL_DIR}SwitchHolder_4_Square.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_4.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_4_Swquare.glb` }
     },
-    5: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_5.glb`, fallbackPath: `${MODEL_DIR}base_05.glb` } },
+    5: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_5.glb` } },
     6: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_6.glb`, fallbackPath: `${MODEL_DIR}base_06.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_6_Sequare.glb`, fallbackPath: `${MODEL_DIR}SwitchHolder_6_Square.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_6.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_6_Sequare.glb` }
     },
-    7: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_7.glb`, fallbackPath: `${MODEL_DIR}base_07.glb` } },
+    7: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_7.glb` } },
     8: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb`, fallbackPath: `${MODEL_DIR}base_08.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb`, fallbackPath: `${MODEL_DIR}SwitchHolder_8_Square.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb` }
     },
-    9: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_9.glb`, fallbackPath: `${MODEL_DIR}base_09.glb` } },
-    10: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_10.glb`, fallbackPath: `${MODEL_DIR}base_10.glb`, hidden: true } },
+    9: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_9.glb` } },
+    10: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_10.glb`, hidden: true } },
   },
   colors: [
     { id: 'red', name: 'أحمر', hex: '#d83333' },
@@ -211,10 +239,10 @@ const state = {
   capColor: CONFIG.colors.find(c => c.id === 'white') || CONFIG.colors[0],
   selected: new Set([0]),
   caps: [],
-  deliveryRegion: 'other',
-  keychain: false,
   currentToken: 0,
   testMode: false,
+  deliveryRegion: 'other',
+  keychain: false,
 };
 
 let renderer, scene, camera, controls, loader, productGroup, assemblyGroup;
@@ -251,7 +279,7 @@ function initTheme() {
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   document.documentElement.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
   updateThemeIcon();
-  els.themeToggle?.addEventListener('click', () => {
+  els.themeToggle.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     localStorage.setItem('ravenlab-theme', next);
@@ -260,7 +288,7 @@ function initTheme() {
 }
 
 function updateThemeIcon() {
-  if (els.themeToggle) els.themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾';
+  els.themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾';
 }
 
 function initUI() {
@@ -278,6 +306,7 @@ function initUI() {
 
   renderLayoutButtons();
   renderPresetButtons();
+  ensurePricingControls();
   renderDeliveryButtons();
   renderSwatches(els.baseColors, CONFIG.colors, state.baseColor.id, (color) => {
     state.baseColor = color;
@@ -366,6 +395,68 @@ function initUI() {
 }
 
 
+function ensurePricingControls() {
+  const controlsPanel = document.querySelector('.controls-panel');
+  const summaryCard = document.querySelector('.summary-card');
+  if (!controlsPanel || !summaryCard) return;
+
+  if (!document.querySelector('#deliveryButtons')) {
+    const section = document.createElement('section');
+    section.className = 'control-section pricing-options';
+    section.innerHTML = `
+      <div class="section-title">
+        <h3>4. التوصيل والإضافات</h3>
+        <span id="deliveryBadge">بقية المحافظات</span>
+      </div>
+      <label class="toggle-row" for="keychainToggle">
+        <input id="keychainToggle" type="checkbox" />
+        <span>
+          <strong>إضافة ميدالية</strong>
+          <small>تضاف إلى تكلفة المنتج</small>
+        </span>
+      </label>
+      <label class="field-label">منطقة التوصيل</label>
+      <div class="segmented delivery-options" id="deliveryButtons"></div>
+    `;
+    controlsPanel.insertBefore(section, summaryCard);
+  }
+
+  const priceRoot = summaryCard.firstElementChild;
+  if (priceRoot && !document.querySelector('#productPriceText')) {
+    priceRoot.classList.add('price-breakdown');
+    priceRoot.innerHTML = `
+      <div class="price-line"><span>سعر المنتج</span><strong id="productPriceText">0 IQD</strong></div>
+      <div class="price-line"><span>التوصيل</span><strong id="deliveryPriceText">0 IQD</strong></div>
+      <div class="price-line total"><span>المجموع التقريبي</span><strong id="priceText">0 IQD</strong></div>
+    `;
+  }
+
+  els.productPriceText = $('#productPriceText');
+  els.deliveryPriceText = $('#deliveryPriceText');
+  els.deliveryButtons = $('#deliveryButtons');
+  els.deliveryBadge = $('#deliveryBadge');
+  els.keychainToggle = $('#keychainToggle');
+  els.priceText = $('#priceText');
+}
+
+function renderDeliveryButtons() {
+  if (!els.deliveryButtons || !CONFIG.costing?.delivery) return;
+  els.deliveryButtons.innerHTML = '';
+  Object.entries(CONFIG.costing.delivery).forEach(([id, option]) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `option-btn ${id === state.deliveryRegion ? 'active' : ''}`;
+    btn.textContent = `${option.label} (${option.price.toLocaleString('en-US')})`;
+    btn.addEventListener('click', () => {
+      state.deliveryRegion = id;
+      renderDeliveryButtons();
+      updateUI();
+      updateOrderDetails();
+    });
+    els.deliveryButtons.appendChild(btn);
+  });
+}
+
 function renderPresetButtons() {
   if (!els.presetButtons) return;
   els.presetButtons.innerHTML = '';
@@ -413,7 +504,6 @@ function applyPreset(preset) {
 }
 
 function renderSwatches(container, colors, activeId, onClick) {
-  if (!container) return;
   container.innerHTML = '';
   colors.forEach((color) => {
     const btn = document.createElement('button');
@@ -436,10 +526,9 @@ function renderSwatches(container, colors, activeId, onClick) {
 
 function renderLayoutButtons() {
   const variants = CONFIG.bases[state.count];
-  if (!els.layoutButtons) return;
   els.layoutButtons.innerHTML = '';
   const entries = Object.entries(variants).filter(([, v]) => !v.hidden);
-  if (els.layoutSection) els.layoutSection.style.display = entries.length > 1 ? '' : 'none';
+  els.layoutSection.style.display = entries.length > 1 ? '' : 'none';
   if (!variants[state.layout] || variants[state.layout].hidden) state.layout = entries[0][0];
   entries.forEach(([id, data]) => {
     const btn = document.createElement('button');
@@ -453,24 +542,6 @@ function renderLayoutButtons() {
       updateUI();
     });
     els.layoutButtons.appendChild(btn);
-  });
-}
-
-function renderDeliveryButtons() {
-  if (!els.deliveryButtons) return;
-  els.deliveryButtons.innerHTML = '';
-  Object.entries(CONFIG.costing.delivery).forEach(([id, option]) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = `option-btn ${id === state.deliveryRegion ? 'active' : ''}`;
-    btn.textContent = `${option.label} — ${formatIQD(option.price)}`;
-    btn.addEventListener('click', () => {
-      state.deliveryRegion = id;
-      renderDeliveryButtons();
-      updateUI();
-      updateOrderDetails();
-    });
-    els.deliveryButtons.appendChild(btn);
   });
 }
 
@@ -568,8 +639,7 @@ async function buildProduct() {
     productGroup.add(assemblyGroup);
 
     const baseData = CONFIG.bases[state.count][state.layout];
-    const loadedBase = await loadBaseScene(baseData, state.count, state.layout);
-    const baseScene = loadedBase.scene;
+    const baseScene = await loadScene(baseData.path);
     if (token !== state.currentToken) return;
 
     const base = cloneScene(baseScene);
@@ -619,45 +689,6 @@ function loadScene(path) {
       resolve(gltf.scene);
     }, undefined, reject);
   });
-}
-
-function loadBaseScene(baseData, count = state.count, layout = state.layout) {
-  const paths = resolveBasePaths(baseData, count, layout);
-  let lastError = null;
-  return paths.reduce((promise, path) => {
-    return promise.catch(async () => {
-      try {
-        const scene = await loadScene(path);
-        return { scene, path };
-      } catch (error) {
-        lastError = error;
-        throw error;
-      }
-    });
-  }, Promise.reject()).catch(() => {
-    throw lastError || new Error('No base model path found');
-  });
-}
-
-function resolveBasePaths(baseData, count = state.count, layout = state.layout) {
-  const paths = [];
-  const add = (path) => {
-    if (path && !paths.includes(path)) paths.push(path);
-  };
-  const padded = String(count).padStart(2, '0');
-  add(baseData?.path);
-  add(baseData?.fallbackPath);
-
-  if (layout === 'square') {
-    add(`${MODEL_DIR}SwitchHolder_${count}_Square.glb`);
-    add(`${MODEL_DIR}SwitchHolder_${count}_Sequare.glb`);
-    add(`${MODEL_DIR}SwitchHolder_${count}_Swquare.glb`);
-    add(`${MODEL_DIR}base_${padded}_Square.glb`);
-  }
-
-  add(`${MODEL_DIR}SwitchHolder_${count}.glb`);
-  add(`${MODEL_DIR}base_${padded}.glb`);
-  return paths;
 }
 
 async function loadCapScene(def, capConfig) {
@@ -1151,89 +1182,87 @@ function makeDefaultCap() {
   return { type: 'plain', color: '#ffffff', colorName: 'أبيض', letter: 'A' };
 }
 
-function formatIQD(value) {
-  return `${Math.round(value).toLocaleString('en-US')} IQD`;
-}
-
-function roundUp(value, step = CONFIG.costing.roundTo || 500) {
+function roundUp(value, step = CONFIG.costing?.roundTo || 500) {
   return Math.ceil(Number(value || 0) / step) * step;
 }
 
 function getFilamentGramPrice() {
-  return CONFIG.costing.filamentKgPrice / CONFIG.costing.filamentKgWeight;
+  return (CONFIG.costing?.filamentKgPrice || 0) / Math.max(CONFIG.costing?.filamentKgWeight || 1000, 1);
 }
 
 function getHourlyPrintCost() {
-  const costs = CONFIG.costing.hourlyCosts;
-  return costs.electricity + costs.printerWear + costs.maintenance;
+  const costs = CONFIG.costing?.hourlyCosts || {};
+  return (costs.electricity || 0) + (costs.printerWear || 0) + (costs.maintenance || 0);
 }
 
 function getSwitchUnitCost() {
-  return CONFIG.costing.switchBoxPrice / CONFIG.costing.switchBoxCount;
+  return (CONFIG.costing?.switchBoxPrice || 0) / Math.max(CONFIG.costing?.switchBoxCount || 1, 1);
 }
 
 function getPrintCost(grams, minutes) {
-  const filamentCost = grams * getFilamentGramPrice();
-  const timeCost = (minutes / 60) * getHourlyPrintCost();
-  return (filamentCost + timeCost) * (1 + CONFIG.costing.failureRate);
+  const filamentCost = Number(grams || 0) * getFilamentGramPrice();
+  const timeCost = (Number(minutes || 0) / 60) * getHourlyPrintCost();
+  return (filamentCost + timeCost) * (1 + (CONFIG.costing?.failureRate || 0));
+}
+
+function interpolate(min, max, t) {
+  return min + ((max - min) * t);
 }
 
 function getBasePrintProfile(count = state.count, layout = state.layout) {
-  const range = CONFIG.costing.basePrintRange;
-  const safeCount = THREE.MathUtils.clamp(Number(count) || 1, range.minCount, range.maxCount);
-  const t = (safeCount - range.minCount) / Math.max(range.maxCount - range.minCount, 1);
-  let grams = range.minGrams + (range.maxGrams - range.minGrams) * t;
-  let minutes = range.minMinutes + (range.maxMinutes - range.minMinutes) * t;
+  const range = CONFIG.costing?.basePrintRange || { minCount: 1, maxCount: 9, minGrams: 5, maxGrams: 20, minMinutes: 21, maxMinutes: 72, squareMultiplier: 1.15 };
+  const t = range.maxCount === range.minCount ? 0 : (Number(count) - range.minCount) / (range.maxCount - range.minCount);
+  const safeT = Math.min(Math.max(t, 0), 1);
+  let grams = interpolate(range.minGrams, range.maxGrams, safeT);
+  let minutes = interpolate(range.minMinutes, range.maxMinutes, safeT);
   if (layout === 'square') {
-    grams *= range.squareMultiplier;
-    minutes *= range.squareMultiplier;
+    grams *= range.squareMultiplier || 1.15;
+    minutes *= range.squareMultiplier || 1.15;
   }
   return { grams, minutes };
 }
 
 function getCapPrintProfile(cap) {
-  const profileId = CONFIG.costing.largeKeycaps.includes(cap.type) ? 'large' : 'small';
-  return CONFIG.costing.keycapPrintProfiles[profileId];
+  const profileId = (CONFIG.costing?.largeKeycaps || []).includes(cap.type) ? 'large' : 'small';
+  return CONFIG.costing?.keycapPrintProfiles?.[profileId] || { grams: 2, minutes: 16 };
 }
 
-function getSwitchHolderCost(count = state.count, layout = state.layout) {
-  const profile = getBasePrintProfile(count, layout);
-  return getPrintCost(profile.grams, profile.minutes);
-}
-
-function getSwitchHolderPrice(count = state.count, layout = state.layout) {
-  const raw = getSwitchHolderCost(count, layout) + (Number(count) * getSwitchUnitCost());
-  return roundUp(raw * (1 + CONFIG.costing.profitRate));
+function getSwitchHolderPrice(count = state.count) {
+  const profile = getBasePrintProfile(count, state.layout);
+  return roundUp(getPrintCost(profile.grams, profile.minutes) * (1 + (CONFIG.costing?.profitRate || 0)));
 }
 
 function getCapPrice(cap) {
-  const profile = getCapPrintProfile(cap);
-  return roundUp(getPrintCost(profile.grams, profile.minutes) * (1 + CONFIG.costing.profitRate));
+  const profile = getCapPrintProfile(cap || makeDefaultCap());
+  return roundUp(getPrintCost(profile.grams, profile.minutes) * (1 + (CONFIG.costing?.profitRate || 0)));
 }
 
 function getDeliveryOption() {
-  return CONFIG.costing.delivery[state.deliveryRegion] || CONFIG.costing.delivery.other;
+  return CONFIG.costing?.delivery?.[state.deliveryRegion] || CONFIG.costing?.delivery?.other || { label: 'بقية المحافظات', price: 5000 };
 }
 
 function getRawProductCost() {
-  const baseCost = getSwitchHolderCost(state.count, state.layout);
-  const switchesCost = state.count * getSwitchUnitCost();
+  const baseProfile = getBasePrintProfile(state.count, state.layout);
+  const baseCost = getPrintCost(baseProfile.grams, baseProfile.minutes);
   const capsCost = state.caps.reduce((sum, cap) => {
     const profile = getCapPrintProfile(cap);
     return sum + getPrintCost(profile.grams, profile.minutes);
   }, 0);
-  const keychainCost = state.keychain ? CONFIG.costing.keychain : 0;
-  return baseCost + switchesCost + capsCost + keychainCost + CONFIG.costing.packaging;
+  const switchesCost = Number(state.count || 0) * getSwitchUnitCost();
+  const keychainCost = state.keychain ? (CONFIG.costing?.keychain || 0) : 0;
+  const packaging = CONFIG.costing?.packaging || 0;
+  return baseCost + capsCost + switchesCost + keychainCost + packaging;
 }
 
 function calculatePriceBreakdown() {
-  const product = roundUp(getRawProductCost() * (1 + CONFIG.costing.profitRate));
-  const delivery = getDeliveryOption().price;
+  const product = roundUp(getRawProductCost() * (1 + (CONFIG.costing?.profitRate || 0)));
+  const deliveryOption = getDeliveryOption();
+  const delivery = deliveryOption.price || 0;
   return {
     product,
     delivery,
     total: product + delivery,
-    deliveryLabel: getDeliveryOption().label,
+    deliveryLabel: deliveryOption.label || 'بقية المحافظات',
   };
 }
 
@@ -1249,7 +1278,7 @@ function buildOrderJson() {
     switches: state.count,
     layout: getLayoutLabel(),
     keychain: state.keychain,
-    switchHolderPrice: getSwitchHolderPrice(state.count, state.layout),
+    switchHolderPrice: getSwitchHolderPrice(state.count),
     baseColor: state.baseColor.name,
     keycaps: state.caps.map((cap, index) => {
       const def = getCapDef(cap.type);
@@ -1265,7 +1294,6 @@ function buildOrderJson() {
     }),
     productPrice: pricing.product,
     deliveryPrice: pricing.delivery,
-    deliveryRegion: state.deliveryRegion,
     deliveryLabel: pricing.deliveryLabel,
     price: pricing.total,
     currency: 'IQD',
@@ -1311,44 +1339,24 @@ function createOrderMessage(order = buildOrderJson()) {
     else if (cap.type === 'plain') details = `سادة — لون الكاب: ${cap.color}`;
     else details = `${cap.design} — لون التصميم الأصلي`;
     return `كاب ${cap.slot}: ${details}`;
-  }).join('
-');
+  }).join('\n');
 
-  return `طلب كليكر مخصص من RavenLab
-` +
-    `------------------------------
-` +
-    `عدد الأزرار: ${order.switches}
-` +
-    `شكل القاعدة: ${order.layout}
-` +
-    `لون الأساس: ${order.baseColor}
-` +
-    `الميدالية: ${order.keychain ? 'مع ميدالية' : 'بدون ميدالية'}
-` +
-    `التوصيل: ${order.deliveryLabel}
-
-` +
-    `تفاصيل الكابات:
-${keycapLines}
-
-` +
-    `سعر المنتج: ${order.productPrice.toLocaleString('en-US')} IQD تقريبًا
-` +
-    `التوصيل: ${order.deliveryPrice.toLocaleString('en-US')} IQD
-` +
-    `المجموع التقريبي: ${order.price.toLocaleString('en-US')} IQD
-` +
-    `ملاحظة: السعر النهائي يتم تأكيده من RavenLab بعد مراجعة الطلب.
-` +
-    `------------------------------
-` +
-    `اسم العميل: ${customer.name || 'غير مكتوب'}
-` +
-    `رقم الجوال: ${customer.phone || 'غير مكتوب'}
-` +
-    `العنوان: ${customer.address || 'غير مكتوب'}
-` +
+  return `طلب كليكر مخصص من RavenLab\n` +
+    `------------------------------\n` +
+    `عدد الأزرار: ${order.switches}\n` +
+    `شكل القاعدة: ${order.layout}\n` +
+    `لون الأساس: ${order.baseColor}\n` +
+    `الميدالية: ${order.keychain ? 'مع ميدالية' : 'بدون ميدالية'}\n` +
+    `التوصيل: ${order.deliveryLabel}\n\n` +
+    `تفاصيل الكابات:\n${keycapLines}\n\n` +
+    `سعر المنتج: ${order.productPrice.toLocaleString('en-US')} IQD تقريبًا\n` +
+    `التوصيل: ${order.deliveryPrice.toLocaleString('en-US')} IQD\n` +
+    `المجموع التقريبي: ${order.price.toLocaleString('en-US')} IQD\n` +
+    `ملاحظة: السعر النهائي يتم تأكيده من RavenLab بعد مراجعة الطلب.\n` +
+    `------------------------------\n` +
+    `اسم العميل: ${customer.name || 'غير مكتوب'}\n` +
+    `رقم الجوال: ${customer.phone || 'غير مكتوب'}\n` +
+    `العنوان: ${customer.address || 'غير مكتوب'}\n` +
     `ملاحظات: ${customer.notes || 'لا توجد'}`;
 }
 
@@ -1414,7 +1422,7 @@ async function openInstagramOrder() {
 }
 
 function updateUI() {
-  if (els.countButtons) [...els.countButtons.children].forEach((btn) => {
+  [...els.countButtons.children].forEach((btn) => {
     btn.classList.toggle('active', Number(btn.dataset.count) === state.count);
   });
   els.countBadge.textContent = `${state.count} ${state.count === 1 ? 'زر' : 'أزرار'}`;
@@ -1463,4 +1471,4 @@ function showToast(message) {
   showToast.timer = setTimeout(() => els.toast.classList.remove('show'), 2600);
 }
 
-console.info('RavenLab configurator odd-square-instagram fix');
+console.info('RavenLab configurator safe cost pricing build');
