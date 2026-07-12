@@ -52,25 +52,25 @@ const CONFIG = {
     largeKeycaps: ['noodles', 'strawberry'],
   },
   bases: {
-    1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb` } },
-    2: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_2.glb` } },
-    3: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_3.glb` } },
+    1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb`, fallbackPath: `${MODEL_DIR}base_01.glb` } },
+    2: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_2.glb`, fallbackPath: `${MODEL_DIR}base_02.glb` } },
+    3: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_3.glb`, fallbackPath: `${MODEL_DIR}base_03.glb` } },
     4: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_4.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_4_Swquare.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_4.glb`, fallbackPath: `${MODEL_DIR}base_04.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_4_Swquare.glb`, fallbackPath: `${MODEL_DIR}SwitchHolder_4_Square.glb` }
     },
-    5: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_5.glb` } },
+    5: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_5.glb`, fallbackPath: `${MODEL_DIR}base_05.glb` } },
     6: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_6.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_6_Sequare.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_6.glb`, fallbackPath: `${MODEL_DIR}base_06.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_6_Sequare.glb`, fallbackPath: `${MODEL_DIR}SwitchHolder_6_Square.glb` }
     },
-    7: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_7.glb` } },
+    7: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_7.glb`, fallbackPath: `${MODEL_DIR}base_07.glb` } },
     8: {
-      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb` },
-      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb` }
+      standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_8.glb`, fallbackPath: `${MODEL_DIR}base_08.glb` },
+      square: { label: 'مربع', path: `${MODEL_DIR}SwitchHolder_8_Sequare.glb`, fallbackPath: `${MODEL_DIR}SwitchHolder_8_Square.glb` }
     },
-    9: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_9.glb` } },
-    10: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_10.glb`, hidden: true } },
+    9: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_9.glb`, fallbackPath: `${MODEL_DIR}base_09.glb` } },
+    10: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_10.glb`, fallbackPath: `${MODEL_DIR}base_10.glb`, hidden: true } },
   },
   colors: [
     { id: 'red', name: 'أحمر', hex: '#d83333' },
@@ -251,7 +251,7 @@ function initTheme() {
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   document.documentElement.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
   updateThemeIcon();
-  els.themeToggle.addEventListener('click', () => {
+  els.themeToggle?.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     localStorage.setItem('ravenlab-theme', next);
@@ -260,7 +260,7 @@ function initTheme() {
 }
 
 function updateThemeIcon() {
-  els.themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾';
+  if (els.themeToggle) els.themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾';
 }
 
 function initUI() {
@@ -413,6 +413,7 @@ function applyPreset(preset) {
 }
 
 function renderSwatches(container, colors, activeId, onClick) {
+  if (!container) return;
   container.innerHTML = '';
   colors.forEach((color) => {
     const btn = document.createElement('button');
@@ -435,9 +436,10 @@ function renderSwatches(container, colors, activeId, onClick) {
 
 function renderLayoutButtons() {
   const variants = CONFIG.bases[state.count];
+  if (!els.layoutButtons) return;
   els.layoutButtons.innerHTML = '';
   const entries = Object.entries(variants).filter(([, v]) => !v.hidden);
-  els.layoutSection.style.display = entries.length > 1 ? '' : 'none';
+  if (els.layoutSection) els.layoutSection.style.display = entries.length > 1 ? '' : 'none';
   if (!variants[state.layout] || variants[state.layout].hidden) state.layout = entries[0][0];
   entries.forEach(([id, data]) => {
     const btn = document.createElement('button');
@@ -566,7 +568,8 @@ async function buildProduct() {
     productGroup.add(assemblyGroup);
 
     const baseData = CONFIG.bases[state.count][state.layout];
-    const baseScene = await loadScene(baseData.path);
+    const loadedBase = await loadBaseScene(baseData, state.count, state.layout);
+    const baseScene = loadedBase.scene;
     if (token !== state.currentToken) return;
 
     const base = cloneScene(baseScene);
@@ -616,6 +619,45 @@ function loadScene(path) {
       resolve(gltf.scene);
     }, undefined, reject);
   });
+}
+
+function loadBaseScene(baseData, count = state.count, layout = state.layout) {
+  const paths = resolveBasePaths(baseData, count, layout);
+  let lastError = null;
+  return paths.reduce((promise, path) => {
+    return promise.catch(async () => {
+      try {
+        const scene = await loadScene(path);
+        return { scene, path };
+      } catch (error) {
+        lastError = error;
+        throw error;
+      }
+    });
+  }, Promise.reject()).catch(() => {
+    throw lastError || new Error('No base model path found');
+  });
+}
+
+function resolveBasePaths(baseData, count = state.count, layout = state.layout) {
+  const paths = [];
+  const add = (path) => {
+    if (path && !paths.includes(path)) paths.push(path);
+  };
+  const padded = String(count).padStart(2, '0');
+  add(baseData?.path);
+  add(baseData?.fallbackPath);
+
+  if (layout === 'square') {
+    add(`${MODEL_DIR}SwitchHolder_${count}_Square.glb`);
+    add(`${MODEL_DIR}SwitchHolder_${count}_Sequare.glb`);
+    add(`${MODEL_DIR}SwitchHolder_${count}_Swquare.glb`);
+    add(`${MODEL_DIR}base_${padded}_Square.glb`);
+  }
+
+  add(`${MODEL_DIR}SwitchHolder_${count}.glb`);
+  add(`${MODEL_DIR}base_${padded}.glb`);
+  return paths;
 }
 
 async function loadCapScene(def, capConfig) {
@@ -1372,7 +1414,7 @@ async function openInstagramOrder() {
 }
 
 function updateUI() {
-  [...els.countButtons.children].forEach((btn) => {
+  if (els.countButtons) [...els.countButtons.children].forEach((btn) => {
     btn.classList.toggle('active', Number(btn.dataset.count) === state.count);
   });
   els.countBadge.textContent = `${state.count} ${state.count === 1 ? 'زر' : 'أزرار'}`;
@@ -1392,7 +1434,8 @@ function updateUI() {
   els.capType.value = firstCap.type;
   const def = getCapDef(firstCap.type);
   els.letterBox.classList.toggle('show', def.category === 'letter');
-  els.capColors.closest('#capColorBox').style.display = def.tintable ? '' : 'none';
+  const capColorBox = els.capColors?.closest('#capColorBox');
+  if (capColorBox) capColorBox.style.display = def.tintable ? '' : 'none';
 
   [...els.letterGrid.children].forEach(btn => {
     btn.classList.toggle('active', btn.textContent === (firstCap.letter || 'A'));
@@ -1403,9 +1446,9 @@ function updateUI() {
   if (els.deliveryPriceText) els.deliveryPriceText.textContent = `${pricing.delivery.toLocaleString('en-US')} IQD`;
   if (els.deliveryBadge) els.deliveryBadge.textContent = pricing.deliveryLabel;
   if (els.keychainToggle) els.keychainToggle.checked = state.keychain;
-  els.priceText.textContent = `${pricing.total.toLocaleString('en-US')} IQD تقريبًا`;
+  if (els.priceText) els.priceText.textContent = `${pricing.total.toLocaleString('en-US')} IQD تقريبًا`;
   if (els.mobilePriceText) els.mobilePriceText.textContent = `${pricing.total.toLocaleString('en-US')} IQD`;
-  els.jsonPreview.textContent = createOrderMessage(buildOrderJson());
+  if (els.jsonPreview) els.jsonPreview.textContent = createOrderMessage(buildOrderJson());
 }
 
 
