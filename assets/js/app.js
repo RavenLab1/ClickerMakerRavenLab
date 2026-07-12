@@ -16,33 +16,40 @@ const CONFIG = {
     // عدل هذا الرابط إلى حساب RavenLab الرسمي.
     instagramUrl: 'https://www.instagram.com/raven_lab1/',
   },
-  basePrice: 0,
-  prices: {
-    // أسعار جسم الكليكر / السويتج حسب عدد الأزرار
-    switchHolderByCount: {
-      1: 500,
-      2: 750,
-      3: 1000,
-      4: 1250,
-      5: 1500,
-      6: 1750,
-      7: 2000,
-      8: 2500,
-      9: 2750,
+  costing: {
+    // كل الأرقام بالدينار العراقي. عدّلها من هنا فقط عند تغير التكاليف.
+    filamentKgPrice: 20000,
+    filamentKgWeight: 1000,
+    failureRate: 0.15,
+    hourlyCosts: {
+      electricity: 500,
+      printerWear: 300,
+      maintenance: 100,
     },
-    // سعر احتياطي فقط إذا لم يوجد العدد في switchHolderByCount
-    switchSeat: 0,
-    plainKeycap: 500,
-    letterKeycap: 500,
-    special: {
-      oreo: 500,
-      strawberry: 750,
-      waffle: 500,
-      chocolate: 500,
-      cheese: 500,
-      noodles: 750,
-      chess: 500,
-    }
+    switchBoxPrice: 30000,
+    switchBoxCount: 200,
+    packaging: 1000,
+    keychain: 133,
+    profitRate: 0.5,
+    roundTo: 500,
+    delivery: {
+      other: { label: 'بقية المحافظات', price: 5000 },
+      north: { label: 'محافظات الشمال', price: 6000 },
+    },
+    basePrintRange: {
+      minCount: 1,
+      maxCount: 9,
+      minGrams: 5,
+      maxGrams: 20,
+      minMinutes: 21,
+      maxMinutes: 72,
+      squareMultiplier: 1.15,
+    },
+    keycapPrintProfiles: {
+      small: { label: 'كاب صغير', grams: 2, minutes: 16 },
+      large: { label: 'كاب كبير', grams: 5, minutes: 32 },
+    },
+    largeKeycaps: ['noodles', 'strawberry'],
   },
   bases: {
     1: { standard: { label: 'عادي', path: `${MODEL_DIR}SwitchHolder_1.glb` } },
@@ -164,6 +171,11 @@ const els = {
   countBadge: $('#countBadge'),
   selectedText: $('#selectedText'),
   priceText: $('#priceText'),
+  productPriceText: $('#productPriceText'),
+  deliveryPriceText: $('#deliveryPriceText'),
+  deliveryButtons: $('#deliveryButtons'),
+  deliveryBadge: $('#deliveryBadge'),
+  keychainToggle: $('#keychainToggle'),
   jsonPreview: $('#jsonPreview'),
   completeOrder: $('#completeOrder'),
   completeOrderMobile: $('#completeOrderMobile'),
@@ -199,6 +211,8 @@ const state = {
   capColor: CONFIG.colors.find(c => c.id === 'white') || CONFIG.colors[0],
   selected: new Set([0]),
   caps: [],
+  deliveryRegion: 'other',
+  keychain: false,
   currentToken: 0,
   testMode: false,
 };
@@ -264,6 +278,7 @@ function initUI() {
 
   renderLayoutButtons();
   renderPresetButtons();
+  renderDeliveryButtons();
   renderSwatches(els.baseColors, CONFIG.colors, state.baseColor.id, (color) => {
     state.baseColor = color;
     applyBaseColor();
@@ -332,6 +347,11 @@ function initUI() {
   els.shareOrder?.addEventListener('click', shareOrderDetails);
   els.sendWhatsapp?.addEventListener('click', sendWhatsappOrder);
   els.openInstagram?.addEventListener('click', openInstagramOrder);
+  els.keychainToggle?.addEventListener('change', () => {
+    state.keychain = !!els.keychainToggle.checked;
+    updateUI();
+    updateOrderDetails();
+  });
   [els.customerName, els.customerPhone, els.customerAddress, els.customerNotes].forEach((input) => {
     input?.addEventListener('input', () => {
       saveCustomerInfo();
@@ -431,6 +451,24 @@ function renderLayoutButtons() {
       updateUI();
     });
     els.layoutButtons.appendChild(btn);
+  });
+}
+
+function renderDeliveryButtons() {
+  if (!els.deliveryButtons) return;
+  els.deliveryButtons.innerHTML = '';
+  Object.entries(CONFIG.costing.delivery).forEach(([id, option]) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `option-btn ${id === state.deliveryRegion ? 'active' : ''}`;
+    btn.textContent = `${option.label} — ${formatIQD(option.price)}`;
+    btn.addEventListener('click', () => {
+      state.deliveryRegion = id;
+      renderDeliveryButtons();
+      updateUI();
+      updateOrderDetails();
+    });
+    els.deliveryButtons.appendChild(btn);
   });
 }
 
@@ -1071,33 +1109,105 @@ function makeDefaultCap() {
   return { type: 'plain', color: '#ffffff', colorName: 'أبيض', letter: 'A' };
 }
 
-function getSwitchHolderPrice(count = state.count) {
-  const countPrice = CONFIG.prices.switchHolderByCount?.[Number(count)];
-  if (typeof countPrice === 'number') return countPrice;
-  return CONFIG.basePrice + (Number(count) * (CONFIG.prices.switchSeat || 0));
+function formatIQD(value) {
+  return `${Math.round(value).toLocaleString('en-US')} IQD`;
+}
+
+function roundUp(value, step = CONFIG.costing.roundTo || 500) {
+  return Math.ceil(Number(value || 0) / step) * step;
+}
+
+function getFilamentGramPrice() {
+  return CONFIG.costing.filamentKgPrice / CONFIG.costing.filamentKgWeight;
+}
+
+function getHourlyPrintCost() {
+  const costs = CONFIG.costing.hourlyCosts;
+  return costs.electricity + costs.printerWear + costs.maintenance;
+}
+
+function getSwitchUnitCost() {
+  return CONFIG.costing.switchBoxPrice / CONFIG.costing.switchBoxCount;
+}
+
+function getPrintCost(grams, minutes) {
+  const filamentCost = grams * getFilamentGramPrice();
+  const timeCost = (minutes / 60) * getHourlyPrintCost();
+  return (filamentCost + timeCost) * (1 + CONFIG.costing.failureRate);
+}
+
+function getBasePrintProfile(count = state.count, layout = state.layout) {
+  const range = CONFIG.costing.basePrintRange;
+  const safeCount = THREE.MathUtils.clamp(Number(count) || 1, range.minCount, range.maxCount);
+  const t = (safeCount - range.minCount) / Math.max(range.maxCount - range.minCount, 1);
+  let grams = range.minGrams + (range.maxGrams - range.minGrams) * t;
+  let minutes = range.minMinutes + (range.maxMinutes - range.minMinutes) * t;
+  if (layout === 'square') {
+    grams *= range.squareMultiplier;
+    minutes *= range.squareMultiplier;
+  }
+  return { grams, minutes };
+}
+
+function getCapPrintProfile(cap) {
+  const profileId = CONFIG.costing.largeKeycaps.includes(cap.type) ? 'large' : 'small';
+  return CONFIG.costing.keycapPrintProfiles[profileId];
+}
+
+function getSwitchHolderCost(count = state.count, layout = state.layout) {
+  const profile = getBasePrintProfile(count, layout);
+  return getPrintCost(profile.grams, profile.minutes);
+}
+
+function getSwitchHolderPrice(count = state.count, layout = state.layout) {
+  const raw = getSwitchHolderCost(count, layout) + (Number(count) * getSwitchUnitCost());
+  return roundUp(raw * (1 + CONFIG.costing.profitRate));
 }
 
 function getCapPrice(cap) {
-  const def = getCapDef(cap.type);
-  if (def.price !== undefined) return def.price;
-  return CONFIG.prices[def.priceKey] || 0;
+  const profile = getCapPrintProfile(cap);
+  return roundUp(getPrintCost(profile.grams, profile.minutes) * (1 + CONFIG.costing.profitRate));
+}
+
+function getDeliveryOption() {
+  return CONFIG.costing.delivery[state.deliveryRegion] || CONFIG.costing.delivery.other;
+}
+
+function getRawProductCost() {
+  const baseCost = getSwitchHolderCost(state.count, state.layout);
+  const switchesCost = state.count * getSwitchUnitCost();
+  const capsCost = state.caps.reduce((sum, cap) => {
+    const profile = getCapPrintProfile(cap);
+    return sum + getPrintCost(profile.grams, profile.minutes);
+  }, 0);
+  const keychainCost = state.keychain ? CONFIG.costing.keychain : 0;
+  return baseCost + switchesCost + capsCost + keychainCost + CONFIG.costing.packaging;
+}
+
+function calculatePriceBreakdown() {
+  const product = roundUp(getRawProductCost() * (1 + CONFIG.costing.profitRate));
+  const delivery = getDeliveryOption().price;
+  return {
+    product,
+    delivery,
+    total: product + delivery,
+    deliveryLabel: getDeliveryOption().label,
+  };
 }
 
 function calculatePrice() {
-  let total = getSwitchHolderPrice(state.count);
-  state.caps.forEach((cap) => {
-    total += getCapPrice(cap);
-  });
-  return total;
+  return calculatePriceBreakdown().total;
 }
 
 function buildOrderJson() {
+  const pricing = calculatePriceBreakdown();
   return {
     brand: CONFIG.brand.name,
     product: 'Custom Switch Clicker',
     switches: state.count,
     layout: getLayoutLabel(),
-    switchHolderPrice: getSwitchHolderPrice(state.count),
+    keychain: state.keychain,
+    switchHolderPrice: getSwitchHolderPrice(state.count, state.layout),
     baseColor: state.baseColor.name,
     keycaps: state.caps.map((cap, index) => {
       const def = getCapDef(cap.type);
@@ -1111,7 +1221,11 @@ function buildOrderJson() {
         price: getCapPrice(cap),
       };
     }),
-    price: calculatePrice(),
+    productPrice: pricing.product,
+    deliveryPrice: pricing.delivery,
+    deliveryRegion: state.deliveryRegion,
+    deliveryLabel: pricing.deliveryLabel,
+    price: pricing.total,
     currency: 'IQD',
   };
 }
@@ -1155,20 +1269,44 @@ function createOrderMessage(order = buildOrderJson()) {
     else if (cap.type === 'plain') details = `سادة — لون الكاب: ${cap.color}`;
     else details = `${cap.design} — لون التصميم الأصلي`;
     return `كاب ${cap.slot}: ${details}`;
-  }).join('\n');
+  }).join('
+');
 
-  return `طلب كليكر مخصص من RavenLab\n` +
-    `------------------------------\n` +
-    `عدد الأزرار: ${order.switches}\n` +
-    `شكل القاعدة: ${order.layout}\n` +
-    `لون الأساس: ${order.baseColor}\n\n` +
-    `تفاصيل الكابات:\n${keycapLines}\n\n` +
-    `السعر الظاهر في الموقع: ${order.price.toLocaleString('en-US')} IQD تقريبًا\n` +
-    `ملاحظة: السعر النهائي يتم تأكيده من RavenLab بعد مراجعة الطلب.\n` +
-    `------------------------------\n` +
-    `اسم العميل: ${customer.name || 'غير مكتوب'}\n` +
-    `رقم الجوال: ${customer.phone || 'غير مكتوب'}\n` +
-    `العنوان: ${customer.address || 'غير مكتوب'}\n` +
+  return `طلب كليكر مخصص من RavenLab
+` +
+    `------------------------------
+` +
+    `عدد الأزرار: ${order.switches}
+` +
+    `شكل القاعدة: ${order.layout}
+` +
+    `لون الأساس: ${order.baseColor}
+` +
+    `الميدالية: ${order.keychain ? 'مع ميدالية' : 'بدون ميدالية'}
+` +
+    `التوصيل: ${order.deliveryLabel}
+
+` +
+    `تفاصيل الكابات:
+${keycapLines}
+
+` +
+    `سعر المنتج: ${order.productPrice.toLocaleString('en-US')} IQD تقريبًا
+` +
+    `التوصيل: ${order.deliveryPrice.toLocaleString('en-US')} IQD
+` +
+    `المجموع التقريبي: ${order.price.toLocaleString('en-US')} IQD
+` +
+    `ملاحظة: السعر النهائي يتم تأكيده من RavenLab بعد مراجعة الطلب.
+` +
+    `------------------------------
+` +
+    `اسم العميل: ${customer.name || 'غير مكتوب'}
+` +
+    `رقم الجوال: ${customer.phone || 'غير مكتوب'}
+` +
+    `العنوان: ${customer.address || 'غير مكتوب'}
+` +
     `ملاحظات: ${customer.notes || 'لا توجد'}`;
 }
 
@@ -1260,9 +1398,13 @@ function updateUI() {
     btn.classList.toggle('active', btn.textContent === (firstCap.letter || 'A'));
   });
 
-  const price = calculatePrice();
-  els.priceText.textContent = `${price.toLocaleString('en-US')} IQD تقريبًا`;
-  if (els.mobilePriceText) els.mobilePriceText.textContent = `${price.toLocaleString('en-US')} IQD`;
+  const pricing = calculatePriceBreakdown();
+  if (els.productPriceText) els.productPriceText.textContent = `${pricing.product.toLocaleString('en-US')} IQD`;
+  if (els.deliveryPriceText) els.deliveryPriceText.textContent = `${pricing.delivery.toLocaleString('en-US')} IQD`;
+  if (els.deliveryBadge) els.deliveryBadge.textContent = pricing.deliveryLabel;
+  if (els.keychainToggle) els.keychainToggle.checked = state.keychain;
+  els.priceText.textContent = `${pricing.total.toLocaleString('en-US')} IQD تقريبًا`;
+  if (els.mobilePriceText) els.mobilePriceText.textContent = `${pricing.total.toLocaleString('en-US')} IQD`;
   els.jsonPreview.textContent = createOrderMessage(buildOrderJson());
 }
 
